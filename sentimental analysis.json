@@ -1,0 +1,197 @@
+{
+  "name": "sentimental analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "review",
+        "formDescription": "p",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "username",
+              "placeholder": ".",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "your opinion ",
+              "placeholder": ".",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c13d2843-2378-4e15-aa79-c31cb17aa2ae",
+      "name": "On form submission",
+      "webhookId": "c15e87b3-3def-46ee-84bd-20034d79ffc2",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14-df7Hmyph9LGPi_qrSJp-Q8Wn_sidF7mzBalJnGovc",
+          "mode": "list",
+          "cachedResultName": "sentiment analysis",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14-df7Hmyph9LGPi_qrSJp-Q8Wn_sidF7mzBalJnGovc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Feuille 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14-df7Hmyph9LGPi_qrSJp-Q8Wn_sidF7mzBalJnGovc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "opinion": "={{ $json.text }}",
+            "username ": "={{ $('On form submission').item.json.username }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "username ",
+              "displayName": "username ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "opinion",
+              "displayName": "opinion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        0
+      ],
+      "id": "927e86aa-29d1-4e93-9cd9-589150802eba",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2H1R9H95MxfBmrNw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=opinion:{{ $json['your opinion '] }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a sentiment analysis AI.  Analyze the customer's opinion.  Reply with ONLY ONE WORD from this list: Positive Negative Neutral  Do not explain. Do not use any other language. Do not add punctuation."
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "=opinion:{{ $json['your opinion '] }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        320,
+        0
+      ],
+      "id": "5a6df875-40d3-493a-a0df-2d21d14f2133",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "phi3:mini",
+        "options": {
+          "temperature": 0,
+          "numPredict": 3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        320,
+        176
+      ],
+      "id": "99842866-ef9b-469f-9603-b1144c3e44e7",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "LMW2vibA8raU9AGk",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "31580c4f-59e9-4617-b367-ff06d8377c4c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1e0669d04679f21a918175517d3981abe7c8e8237611d1ea26fcfab984b026ae"
+  },
+  "id": "Gs246l53civb1nFD",
+  "tags": []
+}
