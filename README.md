@@ -13,7 +13,7 @@ The system is designed to work fully locally without relying on paid cloud AI AP
 ## Technologies Used
 
 * n8n → workflow automation platform
-* Ollama → local LLM runtime
+* Ollama → local LLM runtime.
 * Local LLM models (such as Llama 3, Phi-3, or Mistral)
 * Form Submission Trigger
 * Basic LLM Chain
